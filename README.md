@@ -1,10 +1,10 @@
 # flaskMicroFramework
 
-#Create virtual environment
+# Create virtual environment
 `python3 -m venv venv`
 
 # Activate environment
 `. venv/bin/activate`
 
-#Install 
+# Install 
 `pip install Flask`
