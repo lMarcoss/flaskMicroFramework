@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import render_template
 
-app = Flask(__name__, template_folder='templates_html')
+app = Flask(__name__, template_folder='files_html')
 
 
 @app.route('/hello-world')
@@ -23,8 +23,13 @@ def books(name='no_value', age=0):
 
 @app.route('/users/<user>/<int:age>')
 def users(user, age):
-    list = [1, 2, 3, 4, 6, 7, 5, 8]
-    return render_template('user.html', nombre=user, age=age, list=list)
+    return render_template('user.html', nombre=user, age=age)
+
+
+@app.route('/clients')
+def clients():
+    clients_names = ['client1', 'client2', 'client3', 'client4', 'client5']
+    return render_template('clients.html', clients=clients_names)
 
 
 if __name__ == '__main__':

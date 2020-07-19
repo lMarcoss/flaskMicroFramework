@@ -1,0 +1,12 @@
+{% extends 'templates/index.html' %}
+{% block content %}
+	<label for="clients">Clientes</label>
+	<ul>
+		{% for client in clients %}
+			<li>{{ client }}</li>
+		{% endfor %}
+	</ul>
+
+	{% from '_macro.html' import show_list_h%}
+	{{ show_list_h('hola') }}
+{% endblock %}
