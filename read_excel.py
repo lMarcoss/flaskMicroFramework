@@ -22,7 +22,7 @@ for row in sheet.get_rows():
                 row_value = row_value + ',null'
         elif 2 <= col.ctype <= 4:
             row_value = row_value + ',' + str(int(col.value))
-        elif col.ctype == 0:
+        else:
             row_value = row_value + ',null'
 
     print(row_value[1:])
