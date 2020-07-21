@@ -14,15 +14,25 @@ wb = xlrd.open_workbook(loc)
 sheet = wb.sheet_by_index(0)
 for row in sheet.get_rows():
     row_value = ''
+    count = 0
+    is_valid = 0
     for col in row:
-        if col.ctype == 1:
-            if len(col.value) > 0:
-                row_value = row_value + ',\'' + col.value + '\''
+        # Si la columna 15 tiene valor y es 9 entonces el registro debe ser contado
+        if count == 15:
+            if col.ctype != 0 and col.value == 9:
+                is_valid = 1
+        else:
+            if col.ctype == 1:
+                if len(col.value) > 0:
+                    # se agrega el valor
+                    row_value = row_value + ',\'' + col.value + '\''
+                else:
+                    # se agrega como null
+                    row_value = row_value + ',null'
+            elif 2 <= col.ctype <= 4:
+                row_value = row_value + ',' + str(int(col.value))
             else:
                 row_value = row_value + ',null'
-        elif 2 <= col.ctype <= 4:
-            row_value = row_value + ',' + str(int(col.value))
-        else:
-            row_value = row_value + ',null'
-
-    print(row_value[1:])
+        count = count + 1
+    if is_valid:
+        print(row_value[1:])
