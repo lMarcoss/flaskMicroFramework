@@ -7,4 +7,4 @@
 `. venv/bin/activate`
 
 # Install 
-`pip install Flask`
+`pip install -r requirements.txt`
