@@ -1,8 +1,8 @@
 from wtforms import Form
-from wtforms import StringField, TextField
 from wtforms import HiddenField
-from wtforms.fields.html5 import EmailField
+from wtforms import StringField
 from wtforms import validators
+from wtforms.fields.html5 import EmailField
 
 
 # Validacion personalizada
@@ -17,10 +17,10 @@ class CommentForm(Form):
                                validators.required(message='Username es requerido'),
                                validators.length(min=4, max=25, message='Ingresa un username correcto')
                            ])
-    email = StringField('E-mail',
-                        [
-                            validators.required(message='Email es requerido'),
-                            validators.email(message='Ingresa un mail valido')
-                        ])
+    email = EmailField('E-mail',
+                       [
+                           validators.required(message='Email es requerido'),
+                           validators.email(message='Ingresa un mail valido')
+                       ])
     comment = StringField('Comment')
     honeypot = HiddenField('', [length_honeypot])

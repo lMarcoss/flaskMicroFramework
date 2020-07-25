@@ -1,0 +1,26 @@
+{% extends 'templates/index.html' %}
+
+{% block content %}
+
+	<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+		{% from '_macro_comment.html' import render_field %}
+		<form name="loginForm" id="contactForm" method="POST" action="/authentication/">
+			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+			<div class="row control-group">
+				<div class="form-group col-xs-12 floating-label-form-group controls">
+					{{ render_field(form.username, class='form-control') }}
+					<p class="help-block text-danger"></p>
+				</div>
+			</div>
+			<div class="row control-group">
+				<div class="form-group col-xs-12 floating-label-form-group controls">
+					{{ render_field(form.password, class='form-control') }}
+					<p class="help-block text-danger"></p>
+				</div>
+			</div>
+			{{ form.honeypot }}
+			<button type="submit">Send</button>
+		</form>
+	</div>
+
+{% endblock %}
