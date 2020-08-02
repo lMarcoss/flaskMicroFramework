@@ -5,6 +5,7 @@ from flask import request
 from flask import session
 from flask import redirect
 from flask import url_for
+from flask import flash
 from flask_wtf import CSRFProtect
 
 import user_login
@@ -12,6 +13,12 @@ import user_login
 app = Flask(__name__, template_folder='files_html')
 app.secret_key = 'my_secret_key'
 csrf = CSRFProtect(app)
+
+
+@app.errorhandler(401)
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 
 @app.route('/')
@@ -36,6 +43,10 @@ def authentication():
     login_form = user_login.LoginForm(request.form)
     if login_form.validate():
         session['username'] = login_form.username.data
+        username = login_form.username.data
+        success_message = 'Bienvenido {}'.format(username)
+        flash(success_message)
+
         print(login_form.username.data)
         print(login_form.password.data)
 
