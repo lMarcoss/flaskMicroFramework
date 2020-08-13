@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from flask import Flask
 from flask import make_response
 from flask import render_template
@@ -6,12 +7,17 @@ from flask import session
 from flask import redirect
 from flask import url_for
 from flask import flash
+from flask import g
+import json
 from flask_wtf import CSRFProtect
+from config import DevelopmentConfig
+from config import IntegrationConfig
 
 import user_login
 
 app = Flask(__name__, template_folder='files_html')
-app.secret_key = 'my_secret_key'
+app.config.from_object(IntegrationConfig)
+# app.secret_key = 'my_secret_key'
 csrf = CSRFProtect(app)
 
 
@@ -19,6 +25,21 @@ csrf = CSRFProtect(app)
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+
+
+@app.before_request
+def before_request():
+    g.test = 'test1'
+    print('Before request')
+    print(request.base_url)
+    print(request.access_route)
+
+
+@app.after_request
+def after_request(response):
+    print(g.test)
+    print('after request')
+    return response
 
 
 @app.route('/')
@@ -34,6 +55,7 @@ def index():
 
 @app.route('/login/', methods=['GET'])
 def f_login():
+    print(g.test)
     login_form = user_login.LoginForm()
     return render_template('login.html', title='login', form=login_form)
 
@@ -68,6 +90,16 @@ def logout():
     return redirect(url_for('f_login'))
 
 
+@app.route('/ajax-login', methods=['POST'])
+def ajax_login():
+    print(request.form)
+    username = request.form['username']
+    # mi validacion
+    response = {'status': 200, 'username': username, 'id': 1}
+    return json.dumps(response)
+
+
 # Levanta  el servidor app.run() default port, and mode debug false
 if __name__ == '__main__':
+    csrf.init_app(app)
     app.run(debug=True)
