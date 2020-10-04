@@ -2,3 +2,7 @@ Flask==1.1.2
 WTForms
 xlrd
 flask_wtf
+Flask-SQLAlchemy
+mysqlclient
+mysql-connector-python
+pymysql

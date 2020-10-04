@@ -4,11 +4,17 @@
 
 	<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 		{% from '_macro_comment.html' import render_field %}
-		<form id="loginForm" name="loginForm" id="contactForm" method="POST" action="/login/">
+		<form name="sentMessage" id="contactForm" method="POST" action="/users">
 			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 			<div class="row control-group">
 				<div class="form-group col-xs-12 floating-label-form-group controls">
 					{{ render_field(form.username, class='form-control') }}
+					<p class="help-block text-danger"></p>
+				</div>
+			</div>
+			<div class="row control-group">
+				<div class="form-group col-xs-12 floating-label-form-group controls">
+					{{ render_field(form.email, class='form-control') }}
 					<p class="help-block text-danger"></p>
 				</div>
 			</div>

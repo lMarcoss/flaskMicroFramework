@@ -1,0 +1,2 @@
+-- create databse flaskdb;
+-- use flaskdb;

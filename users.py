@@ -14,13 +14,12 @@ from flask_wtf import CSRFProtect
 
 import user_login
 from config import DevelopmentConfig
-
-from user_models import db
 from user_models import User
+from user_models import UserForm
+from user_models import db
 
 app = Flask(__name__, template_folder='files_html')
 app.config.from_object(DevelopmentConfig)
-# app.secret_key = 'my_secret_key'
 csrf = CSRFProtect(app)
 
 
@@ -32,7 +31,6 @@ def page_not_found(e):
 
 @app.before_request
 def before_request():
-    g.test = 'test1'
     print('Before request')
     print(request.base_url)
     print(request.access_route)
@@ -40,7 +38,6 @@ def before_request():
 
 @app.after_request
 def after_request(response):
-    print(g.test)
     print('after request')
     return response
 
@@ -56,42 +53,39 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/users', methods=['POST'])
+@app.route('/users', methods=['POST', 'GET'])
 def create_user():
-    login_form = user_login.LoginForm(request.form)
-    if login_form.validate():
-        user = User(username=login_form.username.data,
-                    password=login_form.password.data,
-                    email=login_form.username.data)
+    user_form = UserForm(request.form)
+    if request.method == 'POST' and user_form.validate():
+        user = User(username=user_form.username.data,
+                    email=user_form.username.data,
+                    password=user_form.password.data)
         db.session.add(user)
         db.session.commit()
         success_message = 'Usuario registrado'
         flash(success_message)
-    return render_template('login.html', title='login', form=login_form)
+    return render_template('create_user.html', title='Create user', form=user_form)
 
 
-@app.route('/login/', methods=['GET'])
+@app.route('/login/', methods=['GET', 'POST'])
 def f_login():
-    print(g.test)
-    login_form = user_login.LoginForm()
-    return render_template('login.html', title='login', form=login_form)
-
-
-@app.route('/authentication/', methods=['POST'])
-def authentication():
     login_form = user_login.LoginForm(request.form)
-    if login_form.validate():
+    print(login_form.username.data)
+    print(login_form.password.data)
+    if request.method == 'POST' and login_form.validate():
         username = login_form.username.data
         password = login_form.password.data
 
+        user = User.query.filter_by(username=username).first()
+        if user is not None and user.verify_password(password):
+            success_message = 'Bienvenido {}'.format(username)
+            flash(success_message)
+            session['username'] = login_form.username.data
+            return redirect(url_for('index'))
+        else:
+            error_message = 'Usuario o password no validos!'
+            flash(error_message)
 
-        success_message = 'Bienvenido {}'.format(username)
-        flash(success_message)
-
-        print(login_form.username.data)
-        print(login_form.password.data)
-
-        session['username'] = login_form.username.data
     return render_template('login.html', title='login', form=login_form)
 
 

@@ -2,7 +2,8 @@ $(document).ready(function () {
 
 	function ajax_login(){
 		$.ajax({
-			url: '/ajax-login',
+			/*url: '/ajax-login',*/
+			url: '/users',
 			data: $('form').serialize(),
 			type: 'POST',
 			success: function (response) {
