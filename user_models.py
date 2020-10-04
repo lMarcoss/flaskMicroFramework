@@ -31,6 +31,7 @@ class User(db.Model):
     def verify_password(self, password):
         return check_password_hash(self.password, password)
 
+
 def length_honeypot(form, field):
     if len(field.data) > 0:
         raise validators.ValidationError('El campo debe estar vacio')
@@ -49,3 +50,9 @@ class UserForm(Form):
                        ])
     password = StringField('Password')
     honeypot = HiddenField('', [length_honeypot])
+
+    def validate_username(form, field):
+        username = field.data
+        user = User.query.filter_by(username=username).first()
+        if user is not None:
+            raise validators.ValidationError('El username ya se encuentra registrado!')

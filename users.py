@@ -34,6 +34,8 @@ def before_request():
     print('Before request')
     print(request.base_url)
     print(request.access_route)
+    print(request.endpoint)
+    # if 'username' not in session:
 
 
 @app.after_request
@@ -54,7 +56,7 @@ def index():
 
 
 @app.route('/users', methods=['POST', 'GET'])
-def create_user():
+def users():
     user_form = UserForm(request.form)
     if request.method == 'POST' and user_form.validate():
         user = User(username=user_form.username.data,
@@ -68,7 +70,7 @@ def create_user():
 
 
 @app.route('/login/', methods=['GET', 'POST'])
-def f_login():
+def login():
     login_form = user_login.LoginForm(request.form)
     print(login_form.username.data)
     print(login_form.password.data)
@@ -81,7 +83,7 @@ def f_login():
             success_message = 'Bienvenido {}'.format(username)
             flash(success_message)
             session['username'] = login_form.username.data
-            return redirect(url_for('index'))
+            return redirect(url_for('users'))
         else:
             error_message = 'Usuario o password no validos!'
             flash(error_message)
