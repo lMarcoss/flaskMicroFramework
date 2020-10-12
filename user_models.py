@@ -1,13 +1,13 @@
 import datetime
 
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash
 from wtforms import Form
 from wtforms import HiddenField
 from wtforms import StringField
 from wtforms import validators
 from wtforms.fields.html5 import EmailField
-from werkzeug.security import generate_password_hash
-from werkzeug.security import check_password_hash
 
 db = SQLAlchemy()
 
@@ -18,6 +18,7 @@ class User(db.Model):
     username = db.Column(db.String(50), unique=True)
     email = db.Column(db.String(40))
     password = db.Column(db.String(100))
+    comments = db.relationship('Comment')  # no se crea columna en bd, es para relacionar con python
     created_date = db.Column(db.DateTime, default=datetime.datetime.now)
 
     def __init__(self, username, email, password):
@@ -30,6 +31,15 @@ class User(db.Model):
 
     def verify_password(self, password):
         return check_password_hash(self.password, password)
+
+
+class Comment(db.Model):
+    __tablename__ = 'comments'
+
+    comment_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    text = db.Column(db.Text())
+    created_date = db.Column(db.DateTime, default=datetime.datetime.now)
 
 
 def length_honeypot(form, field):

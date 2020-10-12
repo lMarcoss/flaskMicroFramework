@@ -3,7 +3,6 @@ import json
 
 from flask import Flask
 from flask import flash
-from flask import g
 from flask import make_response
 from flask import redirect
 from flask import render_template
@@ -12,11 +11,14 @@ from flask import session
 from flask import url_for
 from flask_wtf import CSRFProtect
 
+import form
 import user_login
 from config import DevelopmentConfig
+from user_models import Comment
 from user_models import User
 from user_models import UserForm
 from user_models import db
+from helper import date_format
 
 app = Flask(__name__, template_folder='files_html')
 app.config.from_object(DevelopmentConfig)
@@ -113,6 +115,32 @@ def ajax_login():
     # mi validacion
     response = {'status': 200, 'username': username, 'id': 1}
     return json.dumps(response)
+
+
+@app.route('/comments/', methods=['GET', 'POST'])
+def comments():
+    comment_form = form.CommentForm(request.form)
+
+    if request.method == 'POST' and comment_form.validate():
+        comment = Comment(
+            user_id=1,
+            text=comment_form.comment.data)
+        db.session.add(comment)
+        db.session.commit()
+
+    return render_template('form.html', title='Comments', form=comment_form)
+
+
+# paginacion con flask
+@app.route('/reviews/', methods=['GET'])
+@app.route('/reviews/<int:page>', methods=['GET'])
+def reviews(page=1):
+    rows_by_page = 3
+    show_error_not_found_data = False  # false/true es para mostrar mostrar pagina 404 0 no si no ha hay datos
+    comentarios = Comment.query.join(User) \
+        .add_columns(User.username, Comment.text, Comment.created_date) \
+        .paginate(page, rows_by_page, show_error_not_found_data)
+    return render_template('reviews.html', comments=comentarios, date_format=date_format)
 
 
 if __name__ == '__main__':
